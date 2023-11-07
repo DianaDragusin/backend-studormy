@@ -14,8 +14,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "scores")
 public class Scores {
+
     @EmbeddedId
     private ScoreId scoreId;
     @Column(name = "score")
     private Integer score;
+
 }
