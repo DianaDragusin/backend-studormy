@@ -1,2 +1,4 @@
-package domain;public class Language {
+package domain;
+
+public class Language {
 }
