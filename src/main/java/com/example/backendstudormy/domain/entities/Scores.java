@@ -1,6 +1,6 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
-import domain.composite_primary_key.ScoreId;
+import com.example.backendstudormy.domain.composite_primary_key.ScoreId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

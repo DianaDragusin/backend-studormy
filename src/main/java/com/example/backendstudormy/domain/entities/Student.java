@@ -1,10 +1,12 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,20 +17,20 @@ import lombok.Setter;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
+    @Column(name = "student_id")
     private Integer studentId;
 
     @Column(name = "firstname")
     private String firstname;
 
-    @Column(name="birthday")
-    private String birthday;
-
     @Column(name = "lastname")
     private String lastname;
 
+    @Column(name="birthday")
+    private Date birthday;
+
     @Column(name = "registration_number")
-    private Integer registrationNumer;
+    private Integer registrationNumber;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "university_id")
@@ -48,6 +50,7 @@ public class Student {
 
     @Column(name = "extraversion")
     private Integer extraversion ;
+
 
 
 }

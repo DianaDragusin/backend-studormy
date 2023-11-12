@@ -1,8 +1,6 @@
-package domain.composite_primary_key;
+package com.example.backendstudormy.domain.composite_primary_key;
 
-import domain.entities.Question;
-import domain.entities.Student;
-import jakarta.persistence.Column;
+import com.example.backendstudormy.domain.entities.Student;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;

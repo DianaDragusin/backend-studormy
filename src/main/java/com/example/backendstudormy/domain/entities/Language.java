@@ -1,4 +1,4 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class Language {
     @Column(name = "language_id")
     private Integer languageId;
 
-    @Column(name = "name")
+    @Column(name = "language_name")
     private String name;
 
 }

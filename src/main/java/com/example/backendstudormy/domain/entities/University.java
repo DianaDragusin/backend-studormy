@@ -1,4 +1,4 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ public class University {
     @Column(name = "university_id")
     private Integer universityId;
 
-    @Column(name = "name")
+    @Column(name = "university_name")
     private String name;
 
     @ManyToMany

@@ -1,4 +1,4 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
-    private Integer languageId;
+    private Integer questionId;
 
     @Column(name = "text")
     private String text;

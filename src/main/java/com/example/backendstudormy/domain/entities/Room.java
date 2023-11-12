@@ -1,4 +1,4 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,5 +23,8 @@ public class Room {
 
     @Column(name = "max_people_number")
     private Integer maxPeopleNumber;
+
+    @Column(name = "group_id")
+    private Integer groupId;
 
 }

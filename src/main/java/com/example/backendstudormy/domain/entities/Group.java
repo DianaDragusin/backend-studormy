@@ -1,4 +1,4 @@
-package domain.entities;
+package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "group")
+@Table(name = "roommates_group")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,7 @@ public class Group {
     private Integer groupId;
 
     @OneToMany
-    @MapsId("student_id")
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "student_id")
     private List<Student> students;
 
 }
