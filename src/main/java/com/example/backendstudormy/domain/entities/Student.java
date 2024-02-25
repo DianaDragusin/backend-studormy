@@ -17,7 +17,7 @@ import java.util.Date;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "student_id")
+    @Column(name = "student_id" , nullable = false)
     private Integer studentId;
 
     @Column(name = "firstname")
@@ -29,8 +29,18 @@ public class Student {
     @Column(name="birthday")
     private Date birthday;
 
+    @Column(name="email", nullable = false)
+    private String email;
+
+    @Column(name="password", nullable = false)
+    private String password;
+
     @Column(name = "registration_number")
     private Integer registrationNumber;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "dormitory_id" , nullable = false)
+    private Dormitory dormitory;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "university_id")

@@ -2,6 +2,10 @@ CREATE TABLE IF NOT EXISTS roomates_group (
     group_id        INTEGER AUTO_INCREMENT PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS dormitory (
+     dormitory_id        INTEGER AUTO_INCREMENT PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS university (
     university_id   INTEGER AUTO_INCREMENT PRIMARY KEY,
     university_name            VARCHAR(255)
@@ -13,6 +17,7 @@ CREATE TABLE IF NOT EXISTS student (
     birthday            DATE,
     registration_number INTEGER,
     university_id       INTEGER,
+    dormitory_id        INTEGER,
     agreableness        INTEGER,
     open_to_experience  INTEGER,
     neuroticism         INTEGER,
@@ -20,7 +25,8 @@ CREATE TABLE IF NOT EXISTS student (
     extraversion        INTEGER,
     group_id            INTEGER,
     FOREIGN KEY (group_id) REFERENCES roomates_group (group_id),
-    FOREIGN KEY (university_id) REFERENCES university (university_id)
+    FOREIGN KEY (university_id) REFERENCES university (university_id),
+    FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
     );
 
 
@@ -39,7 +45,9 @@ CREATE TABLE IF NOT EXISTS room (
      room_number         INTEGER,
      max_people_number   INTEGER,
      group_id            INTEGER,
-     FOREIGN KEY (group_id) REFERENCES roomates_group(group_id)
+     dormitory_id        INTEGER,
+     FOREIGN KEY (group_id) REFERENCES roomates_group(group_id),
+     FOREIGN KEY (dormitory_id) REFERENCES dormitory(dormitory_id)
 );
 
 CREATE TABLE IF NOT EXISTS scores (
