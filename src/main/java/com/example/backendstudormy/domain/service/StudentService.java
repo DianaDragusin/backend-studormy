@@ -1,0 +1,87 @@
+package com.example.backendstudormy.domain.service;
+
+import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
+import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
+import com.example.backendstudormy.domain.dto.student.getStudent.GetStudentResponseDTO;
+import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentRequestDTO;
+import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentResponseDTO;
+import com.example.backendstudormy.domain.entities.Admin;
+import com.example.backendstudormy.domain.entities.Dormitory;
+import com.example.backendstudormy.domain.entities.Student;
+import com.example.backendstudormy.domain.exceptions.CustomException;
+import com.example.backendstudormy.domain.exceptions.ExceptionType;
+import com.example.backendstudormy.domain.mapper.IAdminMapper;
+import com.example.backendstudormy.domain.mapper.IStudentMapper;
+import com.example.backendstudormy.domain.repository.IAdminJPA;
+import com.example.backendstudormy.domain.repository.IDormitoryJPA;
+import com.example.backendstudormy.domain.repository.IStudentJPA;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+public class StudentService implements IStudentService{
+    private IAdminJPA adminJPA;
+    private IStudentJPA studentJPA;
+    private IStudentMapper studentMapper;
+    private IDormitoryJPA dormitoryJPA;
+    public static Integer numberStudents;
+
+    @Override
+    public List<AddStudentResponseDTO> uploadStudents(Integer adminId, List<AddStudentRequestDTO> addStudentRequestDTOList) throws CustomException {
+        List<AddStudentResponseDTO> addStudentResponseDTOS = new ArrayList<>();
+        numberStudents = addStudentRequestDTOList.size();
+        for (AddStudentRequestDTO addStudentRequestDTO : addStudentRequestDTOList)
+        {
+            try {
+                addStudentResponseDTOS.add(addStudent(adminId,addStudentRequestDTO));
+            } catch (CustomException e) {
+                numberStudents --;
+            }
+        }
+        if ( numberStudents != addStudentRequestDTOList.size())
+            throw new CustomException(ExceptionType.MULTIPLE_ERRORS_UPLOAD, List.of (Integer.toString(addStudentRequestDTOList.size()- numberStudents)));
+       return addStudentResponseDTOS;
+    }
+
+    @Override
+    public AddStudentResponseDTO addStudent(Integer adminId,AddStudentRequestDTO addStudentRequestDto) throws CustomException {
+        System.out.println("am intrat in addstudent");
+        if (studentJPA.findAll().stream().anyMatch(student ->
+                student.getEmail().equals(addStudentRequestDto.getEmail())))
+            throw new CustomException(ExceptionType.EMAIL_ALREADY_EXISTS, List.of(addStudentRequestDto.getEmail()));
+        System.out.println("nu am gasit studentii");
+        //System.out.println("admin" + adminJPA.getReferenceById(adminId));
+        Admin correspondingAdmin = adminJPA.findById(adminId)
+                .orElseThrow(() -> new CustomException(ExceptionType.ADMIN_NOT_FOUND, List.of(adminId.toString())));
+        System.out.println("dormitory"+ dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId()) );
+        Dormitory dormitoryAdmin = dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId())
+                .orElseThrow(() -> new CustomException(ExceptionType.DORMITORY_NOT_FOUND, List.of(correspondingAdmin.getDormitory().getDormitoryId().toString())));
+        System.out.println(dormitoryAdmin);
+        if (!dormitoryAdmin.getDormitoryId().equals(addStudentRequestDto.getDormitory()))
+            throw  new CustomException(ExceptionType.STUDENT_DORMITORY_SHOULD_MATCH_ADMIN_DORMITORY, List.of(addStudentRequestDto.getDormitory().toString()));
+        Student student = studentMapper.addStudentRequestDtoToStudent(dormitoryAdmin,addStudentRequestDto);
+        Student stud = studentJPA.save(student);
+        return studentMapper.studentToAddStudentResponseDto(stud);
+
+    }
+
+    @Override
+    public UpdateStudentResponseDTO updateAsset(Integer studentId, UpdateStudentRequestDTO updateStudentRequestDTO) {
+        return null;
+    }
+
+    @Override
+    public GetStudentResponseDTO getStudentById(Integer studentId) throws CustomException {
+        return null;
+    }
+
+    @Override
+    public void deleteAssetById(Integer studentId) {
+
+    }
+}

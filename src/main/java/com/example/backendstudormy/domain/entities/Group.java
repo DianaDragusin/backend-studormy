@@ -20,8 +20,8 @@ public class Group {
     @Column(name = "group_id")
     private Integer groupId;
 
-    @OneToMany
-    @JoinColumn(name = "student_id")
-    private List<Student> students;
+//    @OneToMany
+//    @JoinColumn(name = "student_id")
+//    private List<Student> students;
 
 }

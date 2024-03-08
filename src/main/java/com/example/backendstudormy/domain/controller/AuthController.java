@@ -20,7 +20,8 @@ public class AuthController {
         return authStudentService.login(loginStudentRequestDTO);
     }
     @PostMapping("/login/admin")
-    public LoginAdminResponseDTO login(@RequestBody LoginAdminRequestDTO loginStudentRequestDTO) {
-        return authAdminService.login(loginStudentRequestDTO);
+    public LoginAdminResponseDTO login(@RequestBody LoginAdminRequestDTO loginAdminRequestDTO) {
+       return authAdminService.login(loginAdminRequestDTO);
+
     }
 }

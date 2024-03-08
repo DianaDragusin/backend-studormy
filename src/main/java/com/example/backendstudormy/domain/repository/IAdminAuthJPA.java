@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface IAdminAuthJPA extends JpaRepository<Admin,Integer> {
-    Optional<Admin> findByEmailAndPassword(String email, String password);
+    Admin findByEmailAndPassword(String email, String password);
 }

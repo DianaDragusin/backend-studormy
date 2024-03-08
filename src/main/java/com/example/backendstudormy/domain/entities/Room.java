@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class Room {
     @Column(name = "max_people_number")
     private Integer maxPeopleNumber;
 
-    @Column(name = "group_id")
-    private Integer groupId;
+//    @Column(name = "group_id")
+//    private Group groupId;
 
 }
