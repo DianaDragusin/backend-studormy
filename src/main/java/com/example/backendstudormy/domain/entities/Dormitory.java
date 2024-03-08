@@ -1,13 +1,10 @@
 package com.example.backendstudormy.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
-
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,14 +17,11 @@ public class Dormitory {
     @Column(name = "dormitory_id")
     private Integer dormitoryId;
 
-    @OneToMany
-    @JoinColumn(name = "student_id")
-    private List<Student> students;
+    @Column(name="dormitory_name")
+    private String name;
 
     @OneToMany
     @JoinColumn(name = "room_id")
     private List<Room> rooms;
 
-    @OneToOne(mappedBy = "dormitory", cascade = CascadeType.ALL)
-    private Admin admin;
 }

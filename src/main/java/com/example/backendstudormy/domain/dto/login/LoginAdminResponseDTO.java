@@ -10,7 +10,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class LoginAdminResponseDTO {
-    private Integer adminId;
-    private String email;
-    private Dormitory dormitory;
+    private Integer id;
 }

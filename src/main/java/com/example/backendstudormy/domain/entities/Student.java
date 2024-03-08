@@ -18,7 +18,7 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id" , nullable = false)
-    private Integer studentId;
+    private Integer id;
 
     @Column(name = "firstname")
     private String firstname;
@@ -42,9 +42,9 @@ public class Student {
     @JoinColumn(name = "dormitory_id" , nullable = false)
     private Dormitory dormitory;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "university_id")
-    private University university;
+//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinColumn(name = "university_id")
+//    private University university;
 
     @Column(name = "agreableness")
     private Integer agreableness;
