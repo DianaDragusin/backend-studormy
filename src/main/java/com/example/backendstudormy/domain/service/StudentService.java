@@ -1,8 +1,12 @@
 package com.example.backendstudormy.domain.service;
 
+import com.example.backendstudormy.domain.dto.clustering.ClusteringRequestDTO;
+import com.example.backendstudormy.domain.dto.clustering.ClusteringResponseDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
 import com.example.backendstudormy.domain.dto.student.getStudent.GetStudentResponseDTO;
+import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentOceanRequestDTO;
+import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentOceanResponseDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentResponseDTO;
 import com.example.backendstudormy.domain.entities.Admin;
@@ -21,10 +25,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class StudentService implements IStudentService{
+
     private IAdminJPA adminJPA;
     private IStudentJPA studentJPA;
     private IStudentMapper studentMapper;
@@ -50,20 +56,24 @@ public class StudentService implements IStudentService{
 
     @Override
     public AddStudentResponseDTO addStudent(Integer adminId,AddStudentRequestDTO addStudentRequestDto) throws CustomException {
-        System.out.println("am intrat in addstudent");
+        //System.out.println("am intrat in addstudent");
         if (studentJPA.findAll().stream().anyMatch(student ->
                 student.getEmail().equals(addStudentRequestDto.getEmail())))
             throw new CustomException(ExceptionType.EMAIL_ALREADY_EXISTS, List.of(addStudentRequestDto.getEmail()));
-        System.out.println("nu am gasit studentii");
+
+        //System.out.println("nu am gasit studentii");
         //System.out.println("admin" + adminJPA.getReferenceById(adminId));
         Admin correspondingAdmin = adminJPA.findById(adminId)
                 .orElseThrow(() -> new CustomException(ExceptionType.ADMIN_NOT_FOUND, List.of(adminId.toString())));
-        System.out.println("dormitory"+ dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId()) );
+
+        //System.out.println("dormitory"+ dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId()) );
         Dormitory dormitoryAdmin = dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId())
                 .orElseThrow(() -> new CustomException(ExceptionType.DORMITORY_NOT_FOUND, List.of(correspondingAdmin.getDormitory().getDormitoryId().toString())));
-        System.out.println(dormitoryAdmin);
+
+        //System.out.println(dormitoryAdmin);
         if (!dormitoryAdmin.getDormitoryId().equals(addStudentRequestDto.getDormitory()))
             throw  new CustomException(ExceptionType.STUDENT_DORMITORY_SHOULD_MATCH_ADMIN_DORMITORY, List.of(addStudentRequestDto.getDormitory().toString()));
+
         Student student = studentMapper.addStudentRequestDtoToStudent(dormitoryAdmin,addStudentRequestDto);
         Student stud = studentJPA.save(student);
         return studentMapper.studentToAddStudentResponseDto(stud);
@@ -71,17 +81,55 @@ public class StudentService implements IStudentService{
     }
 
     @Override
-    public UpdateStudentResponseDTO updateAsset(Integer studentId, UpdateStudentRequestDTO updateStudentRequestDTO) {
+    public UpdateStudentResponseDTO updateStudent(Integer studentId, UpdateStudentRequestDTO updateStudentRequestDTO) {
         return null;
     }
+
+    public static  List<Double> getOceanScores(UpdateStudentOceanRequestDTO updateStudentOceanRequestDTO)
+    {
+        CalculateOceanTraits calculateOceanTraits = new CalculateOceanTraits(
+                updateStudentOceanRequestDTO.getOpenness_responses(),
+                updateStudentOceanRequestDTO.getConscientiousness_responses(),
+                updateStudentOceanRequestDTO.getExtroversion_responses(),
+                updateStudentOceanRequestDTO.getAgreeableness_responses(),
+                updateStudentOceanRequestDTO.getNeuroticism_responses()
+        );
+        return calculateOceanTraits.sumTraitsAndScale();
+
+    }
+    @Override
+    public UpdateStudentOceanResponseDTO updateStudentOcean(Integer studentId, UpdateStudentOceanRequestDTO updateStudentOceanRequestDTO) {
+        Student studentToUpdate = studentJPA.findById(studentId).orElseThrow(() -> new CustomException(ExceptionType.STUDENT_NOT_FOUND, List.of(studentId.toString())));
+        List<Double> ocean_scores = getOceanScores(updateStudentOceanRequestDTO);
+        studentToUpdate.setOpenness_score(ocean_scores.get(0));
+        studentToUpdate.setConscientiousness_score(ocean_scores.get(1));
+        studentToUpdate.setExtroversion_score(ocean_scores.get(2));
+        studentToUpdate.setAgreeableness_score(ocean_scores.get(3));
+        studentToUpdate.setNeuroticism_score(ocean_scores.get(4));
+        return studentMapper.studentToUpdateStudentOceanResponseDto(studentJPA.save(studentToUpdate));
+    }
+
+    @Override
+    public void updateStudentCluster(Integer studentId, ClusteringResponseDTO clusteringResponseDTO) {
+        Student studentToUpdate = studentJPA.findById(studentId).orElseThrow(() -> new CustomException(ExceptionType.STUDENT_NOT_FOUND, List.of(studentId.toString())));
+        studentToUpdate.setCluster(clusteringResponseDTO.getCluster());
+        studentJPA.save(studentToUpdate);
+
+    }
+
 
     @Override
     public GetStudentResponseDTO getStudentById(Integer studentId) throws CustomException {
-        return null;
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+
+        return studentMapper.studentToGetStudentResponseDto(student.get());
     }
 
     @Override
-    public void deleteAssetById(Integer studentId) {
+    public void deleteStudentById(Integer studentId) {
 
     }
 }

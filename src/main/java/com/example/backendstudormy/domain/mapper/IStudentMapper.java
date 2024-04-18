@@ -3,6 +3,7 @@ package com.example.backendstudormy.domain.mapper;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
 import com.example.backendstudormy.domain.dto.student.getStudent.GetStudentResponseDTO;
+import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentOceanResponseDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentResponseDTO;
 import com.example.backendstudormy.domain.entities.Dormitory;
@@ -23,6 +24,9 @@ public interface IStudentMapper {
     @Mapping(target = "dormitory", source = "student.dormitory.dormitoryId")
     AddStudentResponseDTO studentToAddStudentResponseDto(Student student);
     UpdateStudentResponseDTO studentToUpdateStudentResponseDto(Student student);
+
+    UpdateStudentOceanResponseDTO studentToUpdateStudentOceanResponseDto(Student student);
+
     List<GetStudentResponseDTO> studentListToGetStudentResponseDtoList(List<Student> students);
 
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class GetStudentResponseDTO {
-    private Integer id;;
+    private Integer id;
     private String email;
     private String password;
     private Integer registrationNumber;
@@ -19,9 +19,10 @@ public class GetStudentResponseDTO {
     private String firstname;
     private String lastname;
     private Date birthday;
-    private Integer agreableness;
-    private Integer openness ;
-    private Integer neuroticism ;
-    private Integer concienciousness ;
-    private Integer extraversion ;
+    private Double extroversion_score;
+    private Double openness_score;
+    private Double neuroticism_score;
+    private Double agreeableness_score;
+    private Double conscientiousness_score;
+    private Integer cluster;
 }
