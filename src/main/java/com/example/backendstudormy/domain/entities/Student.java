@@ -46,21 +46,22 @@ public class Student {
 //    @JoinColumn(name = "university_id")
 //    private University university;
 
-    @Column(name = "agreableness")
-    private Integer agreableness;
+    @Column(name = "agreeableness_score")
+    private Double agreeableness_score;
 
-    @Column(name = "open_to_experience")
-    private Integer openness ;
+    @Column(name = "openness_score")
+    private Double openness_score ;
 
-    @Column(name = "neuroticism")
-    private Integer neuroticism ;
+    @Column(name = "neuroticism_score")
+    private Double neuroticism_score ;
 
-    @Column(name = "concienciousness")
-    private Integer concienciousness ;
+    @Column(name = "conscientiousness_score")
+    private Double conscientiousness_score ;
 
-    @Column(name = "extraversion")
-    private Integer extraversion ;
+    @Column(name = "extroversion_score")
+    private Double extroversion_score ;
 
-
+    @Column(name = "cluster")
+    private Integer cluster ;
 
 }
