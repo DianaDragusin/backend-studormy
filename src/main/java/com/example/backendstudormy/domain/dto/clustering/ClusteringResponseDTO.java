@@ -7,6 +7,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ClusteringResponseDTO {
-    private Integer id;
     private Integer cluster;
 }

@@ -37,15 +37,23 @@ public class StudentController {
     public GetStudentResponseDTO getStudentById(@PathVariable Integer id) {
         return studentService.getStudentById(id);
     }
+    @GetMapping("/cluster/{id}")
+    public List<GetStudentResponseDTO> getStudentsByCluster(@PathVariable Integer id) {
+        return studentService.getStudentsByCluster(id);
+    }
 
     @PutMapping("/ocean/{id}")
     public UpdateStudentOceanResponseDTO updateStudentOceanScores(@PathVariable Integer id,@RequestBody UpdateStudentOceanRequestDTO updateStudentOceanRequestDto) {
         return studentService.updateStudentOcean(id,updateStudentOceanRequestDto);
     }
+    @PutMapping("/update/{id}")
+    public UpdateStudentResponseDTO updateStudentOceanScores(@PathVariable Integer id,@RequestBody UpdateStudentRequestDTO updateStudentRequestDto) {
+        return studentService.updateStudent(id,updateStudentRequestDto);
+    }
 
 
     @PutMapping(value = "/personality-cluster-prediction/{id}")
-    public void getClusterForAStudent(@PathVariable Integer id, @RequestBody ClusteringRequestDTO clusteringRequestDTO) {
+    public ClusteringResponseDTO getClusterForAStudent(@PathVariable Integer id, @RequestBody ClusteringRequestDTO clusteringRequestDTO) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         HttpEntity<ClusteringRequestDTO> entity = new HttpEntity<>(clusteringRequestDTO, headers);
@@ -58,8 +66,9 @@ public class StudentController {
             clusteringResponseDTO.setCluster(cluster);
             System.out.println(cluster);
             studentService.updateStudentCluster(id,clusteringResponseDTO);
-
+            return clusteringResponseDTO;
         }
+        return null;
 
 
     }

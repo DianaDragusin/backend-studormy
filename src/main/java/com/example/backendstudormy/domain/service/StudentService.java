@@ -21,11 +21,13 @@ import com.example.backendstudormy.domain.repository.IDormitoryJPA;
 import com.example.backendstudormy.domain.repository.IStudentJPA;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -82,7 +84,12 @@ public class StudentService implements IStudentService{
 
     @Override
     public UpdateStudentResponseDTO updateStudent(Integer studentId, UpdateStudentRequestDTO updateStudentRequestDTO) {
-        return null;
+        Student studentToUpdate = studentJPA.findById(studentId).orElseThrow(() -> new CustomException(ExceptionType.STUDENT_NOT_FOUND, List.of(studentId.toString())));
+        studentToUpdate.setFirstname(updateStudentRequestDTO.getFirstname());
+        studentToUpdate.setLastname(updateStudentRequestDTO.getLastname());
+        studentToUpdate.setBirthday(updateStudentRequestDTO.getBirthday());
+        studentToUpdate.setEmail(updateStudentRequestDTO.getEmail());
+        return studentMapper.studentToUpdateStudentResponseDto(studentJPA.save(studentToUpdate));
     }
 
     public static  List<Double> getOceanScores(UpdateStudentOceanRequestDTO updateStudentOceanRequestDTO)
@@ -126,6 +133,31 @@ public class StudentService implements IStudentService{
         }
 
         return studentMapper.studentToGetStudentResponseDto(student.get());
+    }
+
+    @Override
+    public List<GetStudentResponseDTO> getStudentsByCluster(Integer id) throws CustomException {
+        Student currentStudent = studentJPA.findById(id)
+                .orElseThrow(() -> new CustomException(ExceptionType.STUDENT_NOT_FOUND, List.of(id.toString())));
+
+        List<Student> students = studentJPA.findAll();
+        List<Student> filteredStudents = new ArrayList<>();
+        for (Student student : students)
+        {
+            if (student.getDormitory().getDormitoryId().equals(currentStudent.getDormitory().getDormitoryId())){
+               if (student.getCluster() != null && student.getCluster().equals(currentStudent.getCluster())) {
+                   if (!student.getId().equals(currentStudent.getId()))
+                      filteredStudents.add(student);
+               }
+             }
+        }
+
+        if (filteredStudents.isEmpty()){
+            throw new CustomException(ExceptionType.STUDENTS_WITH_SAME_CLUSTER_AND_DORMITORY_NOT_FOUND,List.of(id.toString()));
+        }
+
+        return studentMapper.studentListToGetStudentResponseDtoList(filteredStudents);
+
     }
 
     @Override
