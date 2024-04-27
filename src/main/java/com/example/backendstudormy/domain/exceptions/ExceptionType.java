@@ -24,7 +24,8 @@ public enum ExceptionType {
     NO_PERMISSION(HttpStatus.FORBIDDEN, "Access denied.", 3002),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error", 5001),
     CREDENTIAL_ERROR(HttpStatus.CONFLICT, "Credentials incorrect", 3003),
-    STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Student %s does not exist.", 4014);
+    STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Student %s does not exist.", 4014),
+    STUDENTS_WITH_SAME_CLUSTER_AND_DORMITORY_NOT_FOUND(HttpStatus.NOT_FOUND, "No student has the same dormitory and cluster", 4015);
 
 
 

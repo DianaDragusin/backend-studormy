@@ -11,9 +11,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class UpdateStudentResponseDTO {
-    private Integer id;;
+    private Integer id;
     private String email;
-    private String password;
     private Integer registrationNumber;
     private Dormitory dormitory;
     private String firstname;
