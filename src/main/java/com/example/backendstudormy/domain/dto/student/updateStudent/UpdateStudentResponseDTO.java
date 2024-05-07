@@ -24,4 +24,5 @@ public class UpdateStudentResponseDTO {
     private Double agreeableness_score;
     private Double conscientiousness_score;
     private Integer cluster;
+    private String avatarImage;
 }

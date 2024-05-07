@@ -1,20 +1,20 @@
-package com.example.backendstudormy.domain.dto.student.updateStudent;
+package com.example.backendstudormy.domain.dto.lessInfoStudent;
 
 import com.example.backendstudormy.domain.entities.Dormitory;
-import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateStudentRequestDTO {
+@Data
+public class LessInfoStudent {
+    private Integer id;
     private String email;
     private String firstname;
     private String lastname;
-    private Date birthday;
-    private String avatarImage;
+
 }

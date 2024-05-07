@@ -25,7 +25,14 @@ public enum ExceptionType {
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error", 5001),
     CREDENTIAL_ERROR(HttpStatus.CONFLICT, "Credentials incorrect", 3003),
     STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Student %s does not exist.", 4014),
-    STUDENTS_WITH_SAME_CLUSTER_AND_DORMITORY_NOT_FOUND(HttpStatus.NOT_FOUND, "No student has the same dormitory and cluster", 4015);
+    STUDENTS_WITH_SAME_CLUSTER_AND_DORMITORY_NOT_FOUND(HttpStatus.NOT_FOUND, "No student has the same dormitory and cluster", 4015),
+    DUPLICATE_GROUP_NAMES(HttpStatus.BAD_REQUEST, "There is already a group that has the same name as yours", 4016),
+    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "No group with this name found", 4017),
+    GROUP_WITH_MORE_THAN_ONE_MEMBER(HttpStatus.BAD_REQUEST, "Group with more than one student can't be deleted", 4018),
+    STUDENT_CAN_NOT_BE_REMOVED_FROM_GROUP(HttpStatus.BAD_REQUEST, "Student can't be removed from this group", 4019),
+    NO_STUDENT_FOUND(HttpStatus.NOT_FOUND, "No student was found in the database", 4020);
+
+
 
 
 

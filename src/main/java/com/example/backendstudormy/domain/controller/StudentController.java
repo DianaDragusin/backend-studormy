@@ -37,6 +37,11 @@ public class StudentController {
     public GetStudentResponseDTO getStudentById(@PathVariable Integer id) {
         return studentService.getStudentById(id);
     }
+    @GetMapping("/no/{id}")
+    public List<GetStudentResponseDTO> getStudents(@PathVariable Integer id) {
+        return studentService.getStudents(id);
+    }
+
     @GetMapping("/cluster/{id}")
     public List<GetStudentResponseDTO> getStudentsByCluster(@PathVariable Integer id) {
         return studentService.getStudentsByCluster(id);
@@ -69,7 +74,5 @@ public class StudentController {
             return clusteringResponseDTO;
         }
         return null;
-
-
     }
 }

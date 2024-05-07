@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,7 @@ public class StudentService implements IStudentService{
         studentToUpdate.setLastname(updateStudentRequestDTO.getLastname());
         studentToUpdate.setBirthday(updateStudentRequestDTO.getBirthday());
         studentToUpdate.setEmail(updateStudentRequestDTO.getEmail());
+        studentToUpdate.setAvatarImage(updateStudentRequestDTO.getAvatarImage());
         return studentMapper.studentToUpdateStudentResponseDto(studentJPA.save(studentToUpdate));
     }
 
@@ -133,6 +135,21 @@ public class StudentService implements IStudentService{
         }
 
         return studentMapper.studentToGetStudentResponseDto(student.get());
+    }
+
+    @Override
+    public List<GetStudentResponseDTO> getStudents(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Dormitory studentDormitory = student.get().getDormitory();
+        List<Student> students = studentJPA.findStudentsWithSameDormitoryDifferentThanSelf(studentDormitory,studentId);
+        if (students.isEmpty()) {
+            throw new CustomException(ExceptionType.NO_STUDENT_FOUND);
+        }
+
+        return studentMapper.studentsToGetStudentResponseDtoList(students);
     }
 
     @Override
