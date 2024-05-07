@@ -25,4 +25,5 @@ public class GetStudentResponseDTO {
     private Double agreeableness_score;
     private Double conscientiousness_score;
     private Integer cluster;
+    private String avatarImage;
 }

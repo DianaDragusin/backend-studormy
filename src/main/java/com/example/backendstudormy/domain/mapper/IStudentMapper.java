@@ -21,6 +21,8 @@ public interface IStudentMapper {
     Student addStudentRequestDtoToStudent( Dormitory adminDormitory,AddStudentRequestDTO addStudentRequestDTO);
 
     GetStudentResponseDTO studentToGetStudentResponseDto(Student student);
+    List<GetStudentResponseDTO> studentsToGetStudentResponseDtoList(List<Student> student);
+
     @Mapping(target = "dormitory", source = "student.dormitory.dormitoryId")
     AddStudentResponseDTO studentToAddStudentResponseDto(Student student);
     UpdateStudentResponseDTO studentToUpdateStudentResponseDto(Student student);
