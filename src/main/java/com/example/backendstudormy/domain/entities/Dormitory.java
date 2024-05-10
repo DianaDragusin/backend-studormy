@@ -20,8 +20,7 @@ public class Dormitory {
     @Column(name="dormitory_name")
     private String name;
 
-    @OneToMany
-    @JoinColumn(name = "room_id")
+    @OneToMany(mappedBy = "dormitory", cascade = CascadeType.ALL)
     private List<Room> rooms;
 
 }

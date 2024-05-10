@@ -30,7 +30,11 @@ public enum ExceptionType {
     GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "No group with this name found", 4017),
     GROUP_WITH_MORE_THAN_ONE_MEMBER(HttpStatus.BAD_REQUEST, "Group with more than one student can't be deleted", 4018),
     STUDENT_CAN_NOT_BE_REMOVED_FROM_GROUP(HttpStatus.BAD_REQUEST, "Student can't be removed from this group", 4019),
-    NO_STUDENT_FOUND(HttpStatus.NOT_FOUND, "No student was found in the database", 4020);
+    NO_STUDENT_FOUND(HttpStatus.NOT_FOUND, "No student was found in the database", 4020),
+    NO_ROOM_FOUND(HttpStatus.NOT_FOUND, "No room was found in the database", 4021),
+    STOP_BEFORE_START(HttpStatus.BAD_REQUEST, "Can't stop the room allocation process before initialization", 4022);
+
+
 
 
 
