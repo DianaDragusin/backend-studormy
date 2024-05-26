@@ -11,6 +11,7 @@ import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStuden
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentResponseDTO;
 import com.example.backendstudormy.domain.entities.Admin;
 import com.example.backendstudormy.domain.entities.Dormitory;
+import com.example.backendstudormy.domain.entities.Group;
 import com.example.backendstudormy.domain.entities.Student;
 import com.example.backendstudormy.domain.exceptions.CustomException;
 import com.example.backendstudormy.domain.exceptions.ExceptionType;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -126,7 +128,6 @@ public class StudentService implements IStudentService{
 
     }
 
-
     @Override
     public GetStudentResponseDTO getStudentById(Integer studentId) throws CustomException {
         Optional<Student> student = studentJPA.findById(studentId);
@@ -135,6 +136,25 @@ public class StudentService implements IStudentService{
         }
 
         return studentMapper.studentToGetStudentResponseDto(student.get());
+    }
+    private Boolean isInAGroupThatAppliedForARoomAlready(Set<Group> groups)
+    {
+        for (Group group :groups){
+            if (group.getRoom()!= null) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean getStudentHasRoom(Integer studentId) throws CustomException {
+        Optional<Student> studentExist = studentJPA.findById(studentId);
+        if (studentExist.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        else {
+           Student student = studentExist.get();
+           return isInAGroupThatAppliedForARoomAlready(student.getGroups());
+        }
     }
 
     @Override

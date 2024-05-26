@@ -30,9 +30,18 @@ public class RoomController {
     public Integer getMaxRoomNr(@PathVariable Integer id) {
         return roomService.getMaxRoomNr(id);
     }
+    @GetMapping("/maxCapacity/{id}")
+    public Integer getMaxCapacity(@PathVariable Integer id) {
+        return roomService.getMaxCapacity(id);
+    }
+
     @GetMapping("/dormitory/{id}")
     public List<GetRoomResponseDTO> getAllRooms(@PathVariable Integer id) {
         return roomService.getAllRooms(id);
+    }
+    @GetMapping("vacant/dormitory/{id}")
+    public List<GetRoomResponseDTO> getAllVacantRooms(@PathVariable Integer id) {
+        return roomService.getAllVacantRooms(id);
     }
 
 }

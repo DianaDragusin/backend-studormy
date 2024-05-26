@@ -4,6 +4,7 @@ import com.example.backendstudormy.domain.dto.group.GroupResponseDTO;
 import com.example.backendstudormy.domain.dto.group.addGroup.AddGroupResponseDTO;
 import com.example.backendstudormy.domain.dto.group.addGroup.AddStudentToGroupRequestDTO;
 import com.example.backendstudormy.domain.dto.group.getGroup.GetGroupResponseDTO;
+import com.example.backendstudormy.domain.dto.lessInfoGroup.LessInfoGroup;
 import com.example.backendstudormy.domain.dto.lessInfoStudent.StudentGroupsDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
@@ -41,6 +42,14 @@ public class GroupController {
     public GroupResponseDTO getGroupById(@PathVariable Integer id) {
         return groupService.getGroupById(id);
     }
+    @GetMapping("hasRoomAssigned/{groupId}")
+    public Boolean hasRoomAssigned(@PathVariable Integer groupId) {
+        return groupService.hasRoomAssigned(groupId);
+    }
+    @GetMapping("assignedToDormitory/{id}")
+    public List<GroupResponseDTO> getGroupsAssignedToARoomByDormitoryId(@PathVariable Integer id) {
+        return groupService.getGroupsAssignedToARoom(id);
+    }
 
     @GetMapping("ofStudent/{id}")
     public StudentGroupsDTO getStudentGroups(@PathVariable Integer id) {
@@ -55,5 +64,9 @@ public class GroupController {
     @PutMapping("/{groupId}/students/{studentId}")
     public void removeMemberFromGroup(@PathVariable Integer groupId, @PathVariable Integer studentId) {
         groupService.deleteStudentFromGroup(groupId,studentId);
+    }
+    @PutMapping("/{groupId}/rooms/{roomId}")
+    public GroupResponseDTO applyForARoomWithAGroup(@PathVariable Integer groupId, @PathVariable Integer roomId) {
+        return groupService.applyForARoomWithAGroup(groupId,roomId);
     }
 }

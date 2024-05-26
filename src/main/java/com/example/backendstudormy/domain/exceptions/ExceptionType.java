@@ -32,7 +32,12 @@ public enum ExceptionType {
     STUDENT_CAN_NOT_BE_REMOVED_FROM_GROUP(HttpStatus.BAD_REQUEST, "Student can't be removed from this group", 4019),
     NO_STUDENT_FOUND(HttpStatus.NOT_FOUND, "No student was found in the database", 4020),
     NO_ROOM_FOUND(HttpStatus.NOT_FOUND, "No room was found in the database", 4021),
-    STOP_BEFORE_START(HttpStatus.BAD_REQUEST, "Can't stop the room allocation process before initialization", 4022);
+    STOP_BEFORE_START(HttpStatus.BAD_REQUEST, "Can't stop the room allocation process before initialization", 4022),
+    GROUP_HAS_ALREADY_ROOM(HttpStatus.BAD_REQUEST, "Permission denied to apply for a second room", 4023),
+    ERROR_ASSIGNING_STUDENTS(HttpStatus.BAD_REQUEST, "There has been an error while assigning students to vacant rooms", 4024);
+
+
+
 
 
 

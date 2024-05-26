@@ -5,6 +5,7 @@ import com.example.backendstudormy.domain.dto.room.addRoom.AddRoomRequestDTO;
 import com.example.backendstudormy.domain.dto.room.addRoom.AddRoomResponseDTO;
 import com.example.backendstudormy.domain.dto.room.getRoom.GetRoomResponseDTO;
 import com.example.backendstudormy.domain.entities.Dormitory;
+import com.example.backendstudormy.domain.entities.Group;
 import com.example.backendstudormy.domain.entities.Room;
 import com.example.backendstudormy.domain.entities.Student;
 import com.example.backendstudormy.domain.exceptions.CustomException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -28,6 +30,7 @@ public class RoomService implements IRoomService{
     private IRoomJPA roomJPA;
     private IRoomMapper roomMapper;
     private IDormitoryJPA dormitoryJPA;
+    private IGroupJPA groupJPA;
 
 
     @Override
@@ -68,6 +71,28 @@ public class RoomService implements IRoomService{
 
         return roomMapper.roomsToGetRoomResponseDtoList(rooms);
     }
+    @Override
+    public List<GetRoomResponseDTO> getAllVacantRooms(Integer dormitoryId) throws CustomException {
+        Optional<Dormitory> dormitory = dormitoryJPA.findById(dormitoryId);
+        if (dormitory.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(dormitoryId.toString()));
+        }
+
+        List<Integer> takenRoomIds = groupJPA.findAll().stream()
+                .filter(group -> group.getRoom() != null && group.getRoom().getDormitory().getDormitoryId().equals(dormitoryId))
+                .map(group -> group.getRoom().getRoomId())
+                .toList();
+
+        List<Room> roomsFiltered = dormitory.get().getRooms().stream()
+                .filter(room -> !takenRoomIds.contains(room.getRoomId()))
+                .toList();
+          if(roomsFiltered.isEmpty())
+        {
+            throw  new CustomException(ExceptionType.NO_ROOM_FOUND);
+        }
+
+        return roomMapper.roomsToGetRoomResponseDtoList(roomsFiltered);
+    }
 
     @Override
     public Integer getMaxRoomNr(Integer dormitoryId) throws CustomException {
@@ -81,4 +106,23 @@ public class RoomService implements IRoomService{
                 .max()
                 .orElse(0);
     }
+
+    @Override
+    public Integer getMaxCapacity(Integer dormitoryId) throws CustomException {
+        Optional<Dormitory> dormitory = dormitoryJPA.findById(dormitoryId);
+        if (dormitory.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(dormitoryId.toString()));
+        }
+        List<Room> rooms =dormitory.get().getRooms();
+        return rooms.stream()
+                .mapToInt(Room::getMaxPeopleNumber)
+                .max()
+                .orElse(0);
+    }
+
+    @Override
+    public List<Integer> getAllCapacitySorted(Integer dormitoryId) throws CustomException {
+        return null;
+    }
+
 }
