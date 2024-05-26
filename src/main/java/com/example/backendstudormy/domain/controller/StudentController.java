@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,6 +38,11 @@ public class StudentController {
     public GetStudentResponseDTO getStudentById(@PathVariable Integer id) {
         return studentService.getStudentById(id);
     }
+    @GetMapping("hasRoom/{id}")
+    public Boolean getStudentHasRoom(@PathVariable Integer id) {
+        return studentService.getStudentHasRoom(id);
+    }
+
     @GetMapping("/no/{id}")
     public List<GetStudentResponseDTO> getStudents(@PathVariable Integer id) {
         return studentService.getStudents(id);
@@ -75,4 +81,5 @@ public class StudentController {
         }
         return null;
     }
+
 }

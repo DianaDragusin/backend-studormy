@@ -20,4 +20,7 @@ public interface IStudentJPA extends JpaRepository<Student,Integer> {
     @Query("SELECT s FROM Student s WHERE s.dormitory = :dormitory AND s.id <> :studentId")
     List<Student> findStudentsWithSameDormitoryDifferentThanSelf(@Param("dormitory") Dormitory dormitory, @Param("studentId") Integer studentId);
 
+    @Query("SELECT s FROM Student s WHERE s.dormitory = :dormitory ")
+    List<Student> findStudentsWithSameDormitory(@Param("dormitory") Dormitory dormitory);
+
 }

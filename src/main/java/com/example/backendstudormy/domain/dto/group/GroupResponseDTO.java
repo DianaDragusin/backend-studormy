@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupResponseDTO {
     private Integer groupId;
+    private Integer roomId;
     private String name;
     private Integer memberNumber;
     private List<LessInfoStudent> students;

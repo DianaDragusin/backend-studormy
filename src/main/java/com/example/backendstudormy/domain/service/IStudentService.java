@@ -20,10 +20,11 @@ public interface IStudentService {
     UpdateStudentOceanResponseDTO updateStudentOcean(Integer studentId, UpdateStudentOceanRequestDTO updateStudentOceanRequestDTO);
    void updateStudentCluster(Integer studentId,  ClusteringResponseDTO clusteringResponseDTO);
 
+
     GetStudentResponseDTO getStudentById(Integer studentId) throws CustomException;
+    Boolean getStudentHasRoom(Integer studentId) throws CustomException;
     List<GetStudentResponseDTO> getStudents(Integer studentId) throws CustomException;
 
     List<GetStudentResponseDTO> getStudentsByCluster(Integer id) throws CustomException;
-
     void deleteStudentById(Integer studentId);
 }

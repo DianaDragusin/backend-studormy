@@ -1,5 +1,8 @@
 package com.example.backendstudormy.domain.mapper;
 
+import com.example.backendstudormy.domain.dto.clustering.BigFiveResponses;
+import com.example.backendstudormy.domain.dto.clustering.ClusteringRequestDTO;
+import com.example.backendstudormy.domain.dto.clustering.ClusteringResponseDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
 import com.example.backendstudormy.domain.dto.student.getStudent.GetStudentResponseDTO;
@@ -30,5 +33,8 @@ public interface IStudentMapper {
     UpdateStudentOceanResponseDTO studentToUpdateStudentOceanResponseDto(Student student);
 
     List<GetStudentResponseDTO> studentListToGetStudentResponseDtoList(List<Student> students);
+     ClusteringRequestDTO studentToClusteringResponseDTO(Student student);
+     BigFiveResponses studentToBigFiveResponses(Student student);
+    ClusteringRequestDTO BigFiveResponsesToClusteringRequestDTO(BigFiveResponses student);
 
 }

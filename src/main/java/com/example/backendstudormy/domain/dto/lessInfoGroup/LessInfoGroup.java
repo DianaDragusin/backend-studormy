@@ -15,6 +15,7 @@ import lombok.Setter;
 @Data
 public class LessInfoGroup {
     private Integer groupId;
+    private Integer roomId;
     private String name;
     private Integer memberNumber;
 }

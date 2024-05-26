@@ -5,14 +5,17 @@ import com.example.backendstudormy.domain.dto.group.addGroup.AddGroupRequestDTO;
 import com.example.backendstudormy.domain.dto.group.addGroup.AddGroupResponseDTO;
 import com.example.backendstudormy.domain.dto.group.addGroup.AddStudentToGroupRequestDTO;
 import com.example.backendstudormy.domain.dto.group.getGroup.GetGroupResponseDTO;
+import com.example.backendstudormy.domain.dto.lessInfoGroup.LessInfoGroup;
 import com.example.backendstudormy.domain.dto.lessInfoStudent.LessInfoStudent;
 import com.example.backendstudormy.domain.dto.lessInfoStudent.StudentGroupsDTO;
 import com.example.backendstudormy.domain.entities.Group;
+import com.example.backendstudormy.domain.entities.Room;
 import com.example.backendstudormy.domain.entities.Student;
 import com.example.backendstudormy.domain.exceptions.CustomException;
 import com.example.backendstudormy.domain.exceptions.ExceptionType;
 import com.example.backendstudormy.domain.mapper.IGroupMapper;
 import com.example.backendstudormy.domain.repository.IGroupJPA;
+import com.example.backendstudormy.domain.repository.IRoomJPA;
 import com.example.backendstudormy.domain.repository.IStudentJPA;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class GroupService implements IGroupService{
     private IGroupJPA groupJPA;
+    private IRoomJPA roomJPA;
     private IGroupMapper groupMapper;
     private IStudentJPA studentJPA;
 
@@ -44,9 +48,9 @@ public class GroupService implements IGroupService{
 
        AddGroupRequestDTO addGroupRequestDto = makeAddGroupRequest(groupName,student);
 
-        if (groupJPA.findAll().stream().anyMatch(group ->
-                group.getName().equals(addGroupRequestDto.getName())))
-            throw new CustomException(ExceptionType.DUPLICATE_GROUP_NAMES, List.of(addGroupRequestDto.getName()));
+        //if (groupJPA.findAll().stream().anyMatch(group ->
+          //      group.getName().equals(addGroupRequestDto.getName())))
+        //    throw new CustomException(ExceptionType.DUPLICATE_GROUP_NAMES, List.of(addGroupRequestDto.getName()));
 
         Group group = groupMapper.addGroupRequestDtoToGroup(addGroupRequestDto);
         // saving the groups in the student entity
@@ -114,6 +118,7 @@ public class GroupService implements IGroupService{
                    .filter(group -> group.getStudents().contains(studentFound.get()))
                    .collect(Collectors.toSet());
        }
+
        return groups;
    }
 
@@ -167,6 +172,41 @@ public class GroupService implements IGroupService{
 
         }else throw new CustomException(ExceptionType.STUDENT_CAN_NOT_BE_REMOVED_FROM_GROUP, List.of(studentId.toString()));
 
+    }
+
+    @Override
+    public GroupResponseDTO applyForARoomWithAGroup(Integer groupId, Integer roomId) throws CustomException {
+        if (this.hasRoomAssigned(groupId))
+        {
+            throw new CustomException(ExceptionType.GROUP_HAS_ALREADY_ROOM);
+        }
+        Group group = groupJPA.findById(groupId)
+                .orElseThrow(() -> new CustomException(ExceptionType.GROUP_NOT_FOUND, List.of(groupId.toString())));
+
+        Room room = roomJPA.findById(roomId)
+                .orElseThrow(() -> new CustomException(ExceptionType.NO_ROOM_FOUND, List.of(roomId.toString())));
+
+        group.setRoom(room);
+        return groupMapper.groupToGroupResponse(groupJPA.save(group));
+
+    }
+
+    @Override
+    public Boolean hasRoomAssigned(Integer groupId) throws CustomException {
+        Group group = groupJPA.findById(groupId)
+                .orElseThrow(() -> new CustomException(ExceptionType.GROUP_NOT_FOUND, List.of(groupId.toString())));
+        return group.getRoom() != null;
+
+    }
+
+    @Override
+    public List<GroupResponseDTO> getGroupsAssignedToARoom(Integer dormitoryId) throws CustomException {
+       List<Group>  groupsFound = groupJPA.findAll().stream().filter(group -> group.getRoom() != null && group.getRoom().getDormitory().getDormitoryId().equals(dormitoryId)).toList();
+       if(groupsFound.isEmpty())
+       {
+           throw  new CustomException(ExceptionType.GROUP_NOT_FOUND);
+       }
+      return groupMapper.groupsToGroupResponseList(groupsFound);
     }
 
     @Override

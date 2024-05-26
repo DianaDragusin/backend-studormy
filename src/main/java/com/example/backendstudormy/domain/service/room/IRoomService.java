@@ -17,7 +17,12 @@ public interface IRoomService {
     AddRoomResponseDTO addRoom(Integer dormitoryId, AddRoomRequestDTO addRoomRequestDTO) throws CustomException;
     GetRoomResponseDTO getRoomById(Integer roomId) throws CustomException;
     List<GetRoomResponseDTO> getAllRooms(Integer dormitoryId) throws CustomException;
+    List<GetRoomResponseDTO> getAllVacantRooms(Integer dormitoryId) throws CustomException;
+
     Integer getMaxRoomNr(Integer dormitoryId) throws CustomException;
+    Integer getMaxCapacity(Integer dormitoryId) throws CustomException;
+
+    List<Integer> getAllCapacitySorted(Integer dormitoryId) throws  CustomException;
 
 
 }
