@@ -1,7 +1,11 @@
 package com.example.backendstudormy.domain.service;
 
+import com.example.backendstudormy.domain.dto.Membership.GetStudentMembershipValues;
 import com.example.backendstudormy.domain.dto.clustering.ClusteringRequestDTO;
 import com.example.backendstudormy.domain.dto.clustering.ClusteringResponseDTO;
+import com.example.backendstudormy.domain.dto.lessInfoStudent.LessInfoStudent;
+import com.example.backendstudormy.domain.dto.room.addRoom.AddRoomResponseDTO;
+import com.example.backendstudormy.domain.dto.room.getRoom.GetRoomResponseDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.addStudent.AddStudentResponseDTO;
 import com.example.backendstudormy.domain.dto.student.getStudent.GetStudentResponseDTO;
@@ -9,27 +13,20 @@ import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStuden
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentOceanResponseDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentRequestDTO;
 import com.example.backendstudormy.domain.dto.student.updateStudent.UpdateStudentResponseDTO;
-import com.example.backendstudormy.domain.entities.Admin;
-import com.example.backendstudormy.domain.entities.Dormitory;
-import com.example.backendstudormy.domain.entities.Group;
-import com.example.backendstudormy.domain.entities.Student;
+import com.example.backendstudormy.domain.entities.*;
 import com.example.backendstudormy.domain.exceptions.CustomException;
 import com.example.backendstudormy.domain.exceptions.ExceptionType;
 import com.example.backendstudormy.domain.mapper.IAdminMapper;
+import com.example.backendstudormy.domain.mapper.IRoomMapper;
 import com.example.backendstudormy.domain.mapper.IStudentMapper;
-import com.example.backendstudormy.domain.repository.IAdminJPA;
-import com.example.backendstudormy.domain.repository.IDormitoryJPA;
-import com.example.backendstudormy.domain.repository.IStudentJPA;
+import com.example.backendstudormy.domain.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +36,9 @@ public class StudentService implements IStudentService{
     private IAdminJPA adminJPA;
     private IStudentJPA studentJPA;
     private IStudentMapper studentMapper;
+    private IRoomMapper roomMapper;
     private IDormitoryJPA dormitoryJPA;
+    private IGroupJPA groupJPA;
     public static Integer numberStudents;
 
     @Override
@@ -66,16 +65,12 @@ public class StudentService implements IStudentService{
                 student.getEmail().equals(addStudentRequestDto.getEmail())))
             throw new CustomException(ExceptionType.EMAIL_ALREADY_EXISTS, List.of(addStudentRequestDto.getEmail()));
 
-        //System.out.println("nu am gasit studentii");
-        //System.out.println("admin" + adminJPA.getReferenceById(adminId));
         Admin correspondingAdmin = adminJPA.findById(adminId)
                 .orElseThrow(() -> new CustomException(ExceptionType.ADMIN_NOT_FOUND, List.of(adminId.toString())));
 
-        //System.out.println("dormitory"+ dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId()) );
-        Dormitory dormitoryAdmin = dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId())
+          Dormitory dormitoryAdmin = dormitoryJPA.findById(correspondingAdmin.getDormitory().getDormitoryId())
                 .orElseThrow(() -> new CustomException(ExceptionType.DORMITORY_NOT_FOUND, List.of(correspondingAdmin.getDormitory().getDormitoryId().toString())));
 
-        //System.out.println(dormitoryAdmin);
         if (!dormitoryAdmin.getDormitoryId().equals(addStudentRequestDto.getDormitory()))
             throw  new CustomException(ExceptionType.STUDENT_DORMITORY_SHOULD_MATCH_ADMIN_DORMITORY, List.of(addStudentRequestDto.getDormitory().toString()));
 
@@ -137,6 +132,32 @@ public class StudentService implements IStudentService{
 
         return studentMapper.studentToGetStudentResponseDto(student.get());
     }
+
+    @Override
+    public LessInfoStudent getStudentLessInfoStudentById(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+
+        return studentMapper.studentToLessInfoStudent(student.get());
+    }
+
+    @Override
+    public ClusteringRequestDTO getScoresStudentById(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        if (student.get().getCluster() == null)
+        {
+            throw new CustomException(ExceptionType.NO_CLUSTER);
+        }
+
+        return studentMapper.studentToClusteringResponseDTO(student.get());
+
+    }
+
     private Boolean isInAGroupThatAppliedForARoomAlready(Set<Group> groups)
     {
         for (Group group :groups){
@@ -170,6 +191,127 @@ public class StudentService implements IStudentService{
         }
 
         return studentMapper.studentsToGetStudentResponseDtoList(students);
+    }
+
+    @Override
+    public List<Integer> getRoommatesIds(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Student studentFound = student.get();
+        Group groupOfStudent = new Group();
+        for (Group group : studentFound.getGroups()){
+            if (group.getRoom()!=null){
+                groupOfStudent = group;
+                break;
+            }
+        }
+        List<Integer>studentsIds = new ArrayList<>();
+        if (!(groupOfStudent.getStudents() == null))
+        {
+            for(Student studentInGroup : groupOfStudent.getStudents())
+            {
+                if (studentInGroup.getCluster() != null){
+                    System.out.println(student.get().getEmail());
+                    studentsIds.add(studentInGroup.getId());
+                }
+            }
+        }
+        return studentsIds;
+
+    }
+
+    @Override
+    public List<LessInfoStudent> getRoommates(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Student studentFound = student.get();
+        Group groupOfStudent = new Group();
+        for (Group group : studentFound.getGroups()){
+            if (group.getRoom()!=null){
+                groupOfStudent = group;
+                break;
+            }
+        }
+        List<LessInfoStudent>students = new ArrayList<>();
+        if (!(groupOfStudent.getStudents() == null))
+        {
+            for(Student studentInGroup : groupOfStudent.getStudents())
+            {
+                
+                    students.add(studentMapper.studentToLessInfoStudent(studentInGroup));
+            }
+        }
+        return students;
+    }
+
+    @Override
+    public List<LessInfoStudent> getRoommatesOnly(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Student studentFound = student.get();
+        Group groupOfStudent = new Group();
+        for (Group group : studentFound.getGroups()){
+            if (group.getRoom()!=null){
+                groupOfStudent = group;
+                break;
+            }
+        }
+        List<LessInfoStudent>students = new ArrayList<>();
+        if (!(groupOfStudent.getStudents() == null))
+        {
+            for(Student studentInGroup : groupOfStudent.getStudents())
+            {
+                if (!studentInGroup.getId().equals(studentId))
+                    students.add(studentMapper.studentToLessInfoStudent(studentInGroup));
+            }
+        }
+        return students;
+    }
+
+    @Override
+    public AddRoomResponseDTO getRoomOfStudent(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Student studentFound = student.get();
+        AddRoomResponseDTO getRoomResponseDTO = new AddRoomResponseDTO();
+        for (Group group : studentFound.getGroups()){
+            if (group.getRoom()!=null){
+                getRoomResponseDTO = roomMapper.roomToAddRoomResponseDto(group.getRoom());
+                break;
+            }
+        }
+
+        return getRoomResponseDTO;
+    }
+
+    @Override
+    public List<GetStudentResponseDTO> getRoommatesOfStudent(Integer studentId) throws CustomException {
+        Optional<Student> student = studentJPA.findById(studentId);
+        if (student.isEmpty()) {
+            throw new CustomException(ExceptionType.ID_NOT_FOUND, List.of(studentId.toString()));
+        }
+        Student studentFound = student.get();
+        Group groupOfStudent = new Group();
+        for (Group group : studentFound.getGroups()){
+            if (group.getRoom()!=null){
+                groupOfStudent = group;
+                break;
+            }
+        }
+        Set<Student>students = groupOfStudent.getStudents();
+        if (!(students == null))
+        {
+            return studentMapper.studentsToGetStudentResponseDtoSet(students);
+        }
+     return  studentMapper.studentsToGetStudentResponseDtoSet(students);
     }
 
     @Override

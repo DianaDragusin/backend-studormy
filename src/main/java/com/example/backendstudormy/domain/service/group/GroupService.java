@@ -48,10 +48,6 @@ public class GroupService implements IGroupService{
 
        AddGroupRequestDTO addGroupRequestDto = makeAddGroupRequest(groupName,student);
 
-        //if (groupJPA.findAll().stream().anyMatch(group ->
-          //      group.getName().equals(addGroupRequestDto.getName())))
-        //    throw new CustomException(ExceptionType.DUPLICATE_GROUP_NAMES, List.of(addGroupRequestDto.getName()));
-
         Group group = groupMapper.addGroupRequestDtoToGroup(addGroupRequestDto);
         // saving the groups in the student entity
         Set<Group> groupsOfStudent = student.getGroups();

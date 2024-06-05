@@ -21,4 +21,5 @@ public interface IAssignRemainingStudents {
     List<Room> getUnassignedRooms(Integer dormitoryId) throws  CustomException;
     List<Room> getAllRooms(Integer DormitoryId) throws  CustomException;
 
+
 }

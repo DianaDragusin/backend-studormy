@@ -1,5 +1,6 @@
 package com.example.backendstudormy.domain.controller;
 
+import com.example.backendstudormy.domain.dto.Membership.GetMembershipValuesDTO;
 import com.example.backendstudormy.domain.dto.clustering.BigFiveResponses;
 import com.example.backendstudormy.domain.dto.clustering.ClusteringRequestDTO;
 import com.example.backendstudormy.domain.dto.clustering.ClusteringResponseDTO;
@@ -55,4 +56,5 @@ public class AssignRemainingStudentsController {
        return assignRemainingStudents.moveRemainingStudentsToVacantRooms(dormitoryId,studentsRankingClusters);
 
     }
+
 }

@@ -24,4 +24,9 @@ public class AuthController {
        return authAdminService.login(loginAdminRequestDTO);
 
     }
+    @PostMapping("/signUp")
+    public Integer signUp(@RequestBody LoginAdminRequestDTO loginAdminRequestDTO) {
+        return authAdminService.signUp(loginAdminRequestDTO);
+
+    }
 }

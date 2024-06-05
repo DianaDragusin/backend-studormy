@@ -30,6 +30,7 @@ public interface IGroupService {
     GroupResponseDTO applyForARoomWithAGroup(Integer groupId, Integer roomId) throws CustomException;
     Boolean hasRoomAssigned(Integer groupId) throws CustomException;
     List<GroupResponseDTO> getGroupsAssignedToARoom(Integer dormitoryId) throws CustomException;
+
     void deleteGroupById(Integer groupId) throws CustomException;
 
 }
