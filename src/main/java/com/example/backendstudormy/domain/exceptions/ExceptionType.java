@@ -34,7 +34,10 @@ public enum ExceptionType {
     NO_ROOM_FOUND(HttpStatus.NOT_FOUND, "No room was found in the database", 4021),
     STOP_BEFORE_START(HttpStatus.BAD_REQUEST, "Can't stop the room allocation process before initialization", 4022),
     GROUP_HAS_ALREADY_ROOM(HttpStatus.BAD_REQUEST, "Permission denied to apply for a second room", 4023),
-    ERROR_ASSIGNING_STUDENTS(HttpStatus.BAD_REQUEST, "There has been an error while assigning students to vacant rooms", 4024);
+    ERROR_ASSIGNING_STUDENTS(HttpStatus.BAD_REQUEST, "There has been an error while assigning students to vacant rooms", 4024),
+    DORMITORY_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "There is already a dormitory with this name", 4025),
+    NO_CLUSTER(HttpStatus.BAD_REQUEST, "Student did not take personality test", 4026);
+
 
 
 

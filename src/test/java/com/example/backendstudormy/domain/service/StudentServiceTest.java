@@ -33,12 +33,7 @@ class StudentServiceTest {
     void uploadStudents() {
     }
 
-    @Test
-    void addStudent() {
-        StudentService studentService = new StudentService(mockAdminJPA, mockStudentJPA, mockStudentMapper, mockDormitoryJPA);
 
-
-    }
 
     @Test
     void addStudent_ValidAdminId_ValidStudentData() {

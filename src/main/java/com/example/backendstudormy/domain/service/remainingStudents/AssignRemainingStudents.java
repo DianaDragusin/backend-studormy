@@ -69,19 +69,22 @@ public class AssignRemainingStudents implements  IAssignRemainingStudents{
 
     }
     private static Map<Integer, List<Integer>> getRankings(Map<Integer, List<Integer>> rankedClustersOfStudents, int howManyToRemove) {
-        // Create a shallow copy of the original map
         Map<Integer, List<Integer>> copyMap = new HashMap<>(rankedClustersOfStudents);
-
-        // Convert key set to a list to access elements by index
         List<Integer> keys = new ArrayList<>(rankedClustersOfStudents.keySet());
-
-        // Remove the specified number of entries
         for (int i = 0; i < howManyToRemove && !keys.isEmpty(); i++) {
             copyMap.remove(keys.get(i));
         }
 
         return copyMap;
     }
+    private Integer getKey(Map<Integer, List<Integer>> rankedClustersOfStudents, Integer index) {
+        return rankedClustersOfStudents.keySet()
+                .stream()
+                .skip(index - 1)
+                .findFirst()
+                .orElseThrow(IndexOutOfBoundsException::new);
+    }
+
 
     @Override
     public List<GroupResponseDTO> moveRemainingStudentsToVacantRooms(Integer dormitoryId,Map<Integer, List<Integer>> rankedClustersOfStudents) throws CustomException {
@@ -91,27 +94,40 @@ public class AssignRemainingStudents implements  IAssignRemainingStudents{
             for(int roomindex = 0 ; roomindex < rooms.size(); roomindex ++){
                 if(!getRankings(rankedClustersOfStudents,index).isEmpty()){
                     index ++;
-                    Integer[] keys = rankedClustersOfStudents.keySet().toArray(new Integer[0]);
-                    Integer firstKey = keys[index - 1];
+                    Integer firstKey = getKey(rankedClustersOfStudents,index);
                     List<Integer> rankingFirst = rankedClustersOfStudents.get(firstKey);
+                    GroupResponseDTO groupResponseDTO = this.groupService.addGroup(firstKey,"Final Roommates");
+                    Map<Integer, List<Integer>> remainingStudents = getRankings(rankedClustersOfStudents,index);
+                    if (remainingStudents.size() > rooms.get(roomindex).getMaxPeopleNumber() -1)
+                    {
+                        List<Integer> compStudentsId = getCompatibleStudents(rankingFirst,remainingStudents,rooms.get(roomindex).getMaxPeopleNumber() -1 );
 
-                    List<Integer> compStudentsId = getCompatibleStudents(rankingFirst,getRankings(rankedClustersOfStudents,index),rooms.get(roomindex).getMaxPeopleNumber() -1 );
+                        for (int studIndex = 0 ; studIndex < compStudentsId.size(); studIndex ++){
 
-                    GroupResponseDTO groupResponseDTO = this.groupService.addGroup(firstKey,"");
+                            addStudentToGroup(groupResponseDTO,compStudentsId.get(studIndex));
+                            index ++;
+                        }
+                        this.groupService.applyForARoomWithAGroup(groupResponseDTO.getGroupId(),rooms.get(roomindex).getRoomId());
 
-                    addStudentToGroup(groupResponseDTO,firstKey);
-
-                    for (int studIndex = 0 ; studIndex < compStudentsId.size(); studIndex ++){
-
-                        addStudentToGroup(groupResponseDTO,compStudentsId.get(studIndex));
+                    }else{
+                        for (int studIndex = 1 ; studIndex <= remainingStudents.size(); studIndex ++)
+                        {
+                            addStudentToGroup(groupResponseDTO,getKey(remainingStudents,studIndex));
+                            index ++;
+                        }
+                        for (int studIndex = 0; studIndex < rooms.get(roomindex).getMaxPeopleNumber() -1 -remainingStudents.size(); studIndex ++)
+                        {
+                            addStudentToGroup(groupResponseDTO,this.studentsNoCluster.get(0).getId());
+                            this.studentsNoCluster.remove(this.studentsNoCluster.get(0));
+                        }
+                        this.groupService.applyForARoomWithAGroup(groupResponseDTO.getGroupId(),rooms.get(roomindex).getRoomId());
                     }
-                    this.groupService.applyForARoomWithAGroup(groupResponseDTO.getGroupId(),rooms.get(roomindex).getRoomId());
+
 
                 }else if (!this.studentsNoCluster.isEmpty()){
                     Student studentGroupInitiator = this.studentsNoCluster.get(0);
                     this.studentsNoCluster.remove(studentGroupInitiator);
-                    GroupResponseDTO groupResponseDTO = this.groupService.addGroup(studentGroupInitiator.getId(),"");
-                    addStudentToGroup(groupResponseDTO,studentGroupInitiator.getId());
+                    GroupResponseDTO groupResponseDTO = this.groupService.addGroup(studentGroupInitiator.getId(),"Final Roommates");
 
                     for (int i = 0; i < rooms.get(roomindex).getMaxPeopleNumber() - 1; i ++)
                     {
